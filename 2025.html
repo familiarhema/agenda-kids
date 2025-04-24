@@ -1,97 +1,90 @@
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agenda KIDS 2025</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f9fafb;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+    }
 
-<h2>Agenda de Cores com Filtro</h2>
+    h2, h3 {
+      text-align: center;
+    }
 
-<div class="filtro-container">
-  <label for="filtroCor">Filtrar por Cor:</label>
-  <select id="filtroCor">
-    <option value="">Todas</option>
-    <option value="AZUL">AZUL</option>
-    <option value="LARANJA">LARANJA</option>
-    <option value="ROXO">ROXO</option>
-    <option value="AMARELO">AMARELO</option>
-    <option value="VERDE">VERDE</option>
-  </select>
-</div>
+    .filtro-container {
+      margin: 20px auto;
+      max-width: 500px;
+    }
 
-<div class="tabela-wrapper">
-  <table class="tabela-bonita">
-    <thead>
-      <tr>
-        <th>Domingo</th>
-        <th>Manhã</th>
-        <th>Tarde</th>
-        <th>Noite</th>
-        <th>Quinta</th>
-        <th>Quinta Noite</th>
-      </tr>
-    </thead>
-    <tbody id="tabela-principal"></tbody>
-  </table>
-</div>
+    select {
+      width: 100%;
+      padding: 12px 15px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
 
-<h3>Resumo Mensal</h3>
-<div id="resumo-mensal" class="resumo-grid"></div>
+    .tabela-wrapper {
+      overflow-x: auto;
+    }
 
-<style>
-  body {
-    font-family: 'Inter', 'Segoe UI', sans-serif;
-    background-color: #f9fafb;
-    color: #333;
-    padding: 20px;
-  }
+    .tabela-bonita {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin-top: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      border-radius: 12px;
+      
+    }
 
-  h2, h3 {
-    text-align: center;
-  }
+    .tabela-bonita th, .tabela-bonita td {
+      padding: 12px 16px;
+      text-align: center;
+      border-bottom: 1px solid #eee;
+      white-space: nowrap;
+    }
 
-  .filtro-container {
-    margin: 20px 0;
-    text-align: center;
-  }
+    .cor-AZUL { background-color: #93c5fd; color: #1e3a8a; }
+    .cor-LARANJA { background-color: #fdba74; color: #522300; }
+    .cor-ROXO { background-color: #c4b5fd; color: #4c1d95; }
+    .cor-AMARELO { background-color: #fde68a; color: #665c00; }
+    .cor-VERDE { background-color: #86efac; color: #064e3b; }
 
-  select {
-    padding: 10px 15px;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background-color: #fff;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  }
+    .celula-cor {
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      font-weight: 600;
+      height: 40px;
+    }
 
-  .tabela-wrapper {
-    overflow-x: auto;
-  }
+    .data-formatada {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+      font-size: 0.9rem;
+    }
 
-  .tabela-bonita {
-    width: 100%;
-    min-width: 600px;
-    border-collapse: separate;
-    border-spacing: 0;
-    margin-top: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    border-radius: 12px;
-  }
-
-  .tabela-bonita th, .tabela-bonita td {
-    padding: 12px 16px;
-    text-align: center;
-    border-bottom: 1px solid #eee;
-    white-space: nowrap;
-  }
-
-  .cor-AZUL { background-color: #93c5fd; color: #1e3a8a; font-weight: 600; border-radius: 8px; }
-  .cor-LARANJA { background-color: #fdba74; color: #522300; font-weight: 600; border-radius: 8px; }
-  .cor-ROXO { background-color: #c4b5fd; color: #4c1d95; font-weight: 600; border-radius: 8px; }
-  .cor-AMARELO { background-color: #fde68a; color: #665c00; font-weight: 600; border-radius: 8px; }
-  .cor-VERDE { background-color: #86efac; color: #064e3b; font-weight: 600; border-radius: 8px; }
-
-  .resumo-grid {
+    @media (max-width: 600px) {
+      .celula-cor {
+        font-size: 0;
+      }
+    }
+    .resumo-grid {
     display: flex;
     flex-wrap: wrap;
     gap: 16px;
     justify-content: center;
-    margin-top: 20px;
+    margin-top: 30px;
   }
 
   .card-resumo {
@@ -101,126 +94,158 @@
     box-shadow: 0 2px 6px rgba(0,0,0,0.05);
     padding: 12px 16px;
     width: 180px;
-  }
-
-  .card-resumo h4 {
-    margin: 0 0 8px 0;
-    font-size: 1rem;
-    color: #222;
     text-align: center;
   }
 
-  .card-resumo div {
-    font-size: 0.85rem;
-    margin: 2px 0;
-    text-align: center;
-  }
-
-  /* Responsividade */
   @media (max-width: 600px) {
-    select {
-      width: 80%;
-    }
-
-    .card-resumo {
-      width: 100%;
-      max-width: 300px;
-    }
+    .tabela-bonita th{
+        font-size: 0.7rem;
+      }
+      .data-formatada{
+        font-size: 0.7rem;
+      }
+      .celula-cor {
+        font-size: 0;
+      }
+      .tabela-wrapper {
+        width: 100%;
+        transform-origin: top;
+      }
   }
 </style>
+</head>
+<body>
+  <h2>Agenda KIDS 2025</h2>
+
+  <div class="filtro-container">
+    <select id="filtroCor">
+      <option value="">Filtrar por cor</option>
+      <option value="AZUL">AZUL</option>
+      <option value="LARANJA">LARANJA</option>
+      <option value="ROXO">ROXO</option>
+      <option value="AMARELO">AMARELO</option>
+      <option value="VERDE">VERDE</option>
+    </select>
+  </div>
+
+  <div class="tabela-wrapper">
+    <table class="tabela-bonita">
+      <thead>
+        <tr>
+          <th>Dom</th>
+          <th>Manh</th>
+          <th>Tard</th>
+          <th>Noit</th>
+          <th>Qui</th>
+          <th>Qui N</th>
+        </tr>
+      </thead>
+      <tbody id="tabela-principal"></tbody>
+    </table>
+  </div>
+
+  <h3>Resumo Mensal</h3>
+  <div id="resumo-mensal" class="resumo-grid"></div>
 
 <script>
-  const coresSequencia = [
-    ['AZUL', 'LARANJA', 'ROXO', 'AZUL'],
-    ['AMARELO', 'AZUL', 'VERDE', 'AMARELO'],
-    ['ROXO', 'AMARELO', 'LARANJA', 'ROXO'],
-    ['VERDE', 'ROXO', 'AZUL', 'VERDE'],
-    ['LARANJA', 'VERDE', 'AMARELO', 'LARANJA']
-  ];
+    const coresSequencia = [
+      ['ROXO', 'AMARELO', 'LARANJA', 'ROXO'],
+      ['VERDE', 'ROXO', 'AZUL', 'VERDE'],
+      ['LARANJA', 'VERDE', 'AMARELO', 'LARANJA'],
+      ['AZUL', 'LARANJA', 'ROXO', 'AZUL'],
+      ['AMARELO', 'AZUL', 'VERDE', 'AMARELO']
+    ];
 
-  const tbodyPrincipal = document.getElementById("tabela-principal");
-  const resumoGrid = document.getElementById("resumo-mensal");
+    const tbody = document.getElementById("tabela-principal");
+const resumoGrid = document.getElementById("resumo-mensal");
 
-  let domingo = new Date(2025, 3, 20);
-  let quinta = new Date(2025, 3, 24);
-  let index = 0;
+    let domingo = new Date(2025, 4, 4);
+    let quinta = new Date(2025, 4, 8);
+    let index = 0;
 
-  const resumoMensal = {};
-  const totalGeral = { 'AZUL': 0, 'LARANJA': 0, 'ROXO': 0, 'AMARELO': 0, 'VERDE': 0 };
+    const formatarData = (data) => {
+      const dia = data.getDate();
+      const mes = data.toLocaleDateString('pt-BR', { month: 'short' });
+      return `<div class='data-formatada'><strong>${dia}</strong><span>${mes}</span></div>`;
+    };
 
-  while (domingo <= new Date(2025, 11, 28) && quinta <= new Date(2026, 0, 1)) {
-    const linha = coresSequencia[index % 5];
-    const tr = document.createElement("tr");
+    const resumoMensal = {};
+const totalGeral = { 'AZUL': 0, 'LARANJA': 0, 'ROXO': 0, 'AMARELO': 0, 'VERDE': 0 };
 
-    const mesAnoDomingo = `${domingo.toLocaleString('pt-BR', { month: 'long' })} ${domingo.getFullYear()}`;
-    const mesAnoQuinta = `${quinta.toLocaleString('pt-BR', { month: 'long' })} ${quinta.getFullYear()}`;
+while (domingo <= new Date(2025, 11, 28) && quinta <= new Date(2026, 0, 1)) {
+  const linha = coresSequencia[index % 5];
+  const tr = document.createElement("tr");
 
-    [mesAnoDomingo, mesAnoQuinta].forEach(mes => {
-      if (!resumoMensal[mes]) {
-        resumoMensal[mes] = { 'AZUL': 0, 'LARANJA': 0, 'ROXO': 0, 'AMARELO': 0, 'VERDE': 0 };
-      }
-    });
+  const mesAnoDomingo = `${domingo.toLocaleString('pt-BR', { month: 'long' })} ${domingo.getFullYear()}`;
+  const mesAnoQuinta = `${quinta.toLocaleString('pt-BR', { month: 'long' })} ${quinta.getFullYear()}`;
 
-    for (let i = 0; i < 3; i++) {
-      resumoMensal[mesAnoDomingo][linha[i]]++;
-      totalGeral[linha[i]]++;
+  [mesAnoDomingo, mesAnoQuinta].forEach(mes => {
+    if (!resumoMensal[mes]) {
+      resumoMensal[mes] = { 'AZUL': 0, 'LARANJA': 0, 'ROXO': 0, 'AMARELO': 0, 'VERDE': 0 };
     }
-
-    resumoMensal[mesAnoQuinta][linha[3]]++;
-    totalGeral[linha[3]]++;
-
-    const tdDomingo = document.createElement("td");
-    tdDomingo.textContent = domingo.toLocaleDateString('pt-BR');
-    tr.appendChild(tdDomingo);
-
-    for (let i = 0; i < 3; i++) {
-      const td = document.createElement("td");
-      td.textContent = linha[i];
-      td.className = `cor-${linha[i]}`;
-      tr.appendChild(td);
-    }
-
-    const tdQuinta = document.createElement("td");
-    tdQuinta.textContent = quinta.toLocaleDateString('pt-BR');
-    tr.appendChild(tdQuinta);
-
-    const tdQuintaNoite = document.createElement("td");
-    tdQuintaNoite.textContent = linha[3];
-    tdQuintaNoite.className = `cor-${linha[3]}`;
-    tr.appendChild(tdQuintaNoite);
-
-    tbodyPrincipal.appendChild(tr);
-
-    domingo.setDate(domingo.getDate() + 7);
-    quinta.setDate(quinta.getDate() + 7);
-    index++;
-  }
-
-  for (const mes in resumoMensal) {
-    const card = document.createElement("div");
-    card.className = "card-resumo";
-    card.innerHTML = `<h4>${mes}</h4>` +
-      Object.entries(resumoMensal[mes]).map(([cor, qtd]) => `<div>${cor}: ${qtd}</div>`).join('');
-    resumoGrid.appendChild(card);
-  }
-
-  const cardTotal = document.createElement("div");
-  cardTotal.className = "card-resumo";
-  cardTotal.innerHTML = `<h4>Total Geral</h4>` +
-    Object.entries(totalGeral).map(([cor, qtd]) => `<div>${cor}: ${qtd}</div>`).join('');
-  resumoGrid.appendChild(cardTotal);
-
-  document.getElementById('filtroCor').addEventListener('change', function() {
-    const corSelecionada = this.value;
-    const linhas = tbodyPrincipal.querySelectorAll('tr');
-
-    linhas.forEach(tr => {
-      if (!corSelecionada) {
-        tr.style.display = '';
-      } else {
-        const contemCor = Array.from(tr.children).some(td => td.textContent === corSelecionada);
-        tr.style.display = contemCor ? '' : 'none';
-      }
-    });
   });
-</script>
+
+  for (let i = 0; i < 3; i++) {
+    resumoMensal[mesAnoDomingo][linha[i]]++;
+    totalGeral[linha[i]]++;
+  }
+
+  resumoMensal[mesAnoQuinta][linha[3]]++;
+  totalGeral[linha[3]]++;
+
+  const tdDomingo = document.createElement("td");
+  tdDomingo.innerHTML = formatarData(domingo);
+  tr.appendChild(tdDomingo);
+
+  for (let i = 0; i < 3; i++) {
+    const td = document.createElement("td");
+    td.className = `cor-${linha[i]} celula-cor`;
+    td.textContent = linha[i];
+    tr.appendChild(td);
+  }
+
+  const tdQuinta = document.createElement("td");
+  tdQuinta.innerHTML = formatarData(quinta);
+  tr.appendChild(tdQuinta);
+
+  const tdQuintaNoite = document.createElement("td");
+  tdQuintaNoite.className = `cor-${linha[3]} celula-cor`;
+  tdQuintaNoite.textContent = linha[3];
+  tr.appendChild(tdQuintaNoite);
+
+  tbody.appendChild(tr);
+
+  domingo.setDate(domingo.getDate() + 7);
+  quinta.setDate(quinta.getDate() + 7);
+  index++;
+}
+
+for (const mes in resumoMensal) {
+  const card = document.createElement("div");
+  card.className = "card-resumo";
+  card.innerHTML = `<h4>${mes}</h4>` +
+    Object.entries(resumoMensal[mes]).map(([cor, qtd]) => `<div>${cor}: ${qtd}</div>`).join('');
+  resumoGrid.appendChild(card);
+}
+
+const cardTotal = document.createElement("div");
+cardTotal.className = "card-resumo";
+cardTotal.innerHTML = `<h4>Total Geral</h4>` +
+  Object.entries(totalGeral).map(([cor, qtd]) => `<div>${cor}: ${qtd}</div>`).join('');
+resumoGrid.appendChild(cardTotal);
+
+    document.getElementById('filtroCor').addEventListener('change', function() {
+      const corSelecionada = this.value;
+      const linhas = tbody.querySelectorAll('tr');
+      linhas.forEach(tr => {
+        if (!corSelecionada) {
+          tr.style.display = '';
+        } else {
+          const contemCor = Array.from(tr.children).some(td => td.textContent.includes(corSelecionada));
+          tr.style.display = contemCor ? '' : 'none';
+        }
+      });
+    });
+  </script>
+</body>
+</html>
