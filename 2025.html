@@ -1,0 +1,226 @@
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+<h2>Agenda de Cores com Filtro</h2>
+
+<div class="filtro-container">
+  <label for="filtroCor">Filtrar por Cor:</label>
+  <select id="filtroCor">
+    <option value="">Todas</option>
+    <option value="AZUL">AZUL</option>
+    <option value="LARANJA">LARANJA</option>
+    <option value="ROXO">ROXO</option>
+    <option value="AMARELO">AMARELO</option>
+    <option value="VERDE">VERDE</option>
+  </select>
+</div>
+
+<div class="tabela-wrapper">
+  <table class="tabela-bonita">
+    <thead>
+      <tr>
+        <th>Domingo</th>
+        <th>Manhã</th>
+        <th>Tarde</th>
+        <th>Noite</th>
+        <th>Quinta</th>
+        <th>Quinta Noite</th>
+      </tr>
+    </thead>
+    <tbody id="tabela-principal"></tbody>
+  </table>
+</div>
+
+<h3>Resumo Mensal</h3>
+<div id="resumo-mensal" class="resumo-grid"></div>
+
+<style>
+  body {
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    background-color: #f9fafb;
+    color: #333;
+    padding: 20px;
+  }
+
+  h2, h3 {
+    text-align: center;
+  }
+
+  .filtro-container {
+    margin: 20px 0;
+    text-align: center;
+  }
+
+  select {
+    padding: 10px 15px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  }
+
+  .tabela-wrapper {
+    overflow-x: auto;
+  }
+
+  .tabela-bonita {
+    width: 100%;
+    min-width: 600px;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    border-radius: 12px;
+  }
+
+  .tabela-bonita th, .tabela-bonita td {
+    padding: 12px 16px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+    white-space: nowrap;
+  }
+
+  .cor-AZUL { background-color: #93c5fd; color: #1e3a8a; font-weight: 600; border-radius: 8px; }
+  .cor-LARANJA { background-color: #fdba74; color: #522300; font-weight: 600; border-radius: 8px; }
+  .cor-ROXO { background-color: #c4b5fd; color: #4c1d95; font-weight: 600; border-radius: 8px; }
+  .cor-AMARELO { background-color: #fde68a; color: #665c00; font-weight: 600; border-radius: 8px; }
+  .cor-VERDE { background-color: #86efac; color: #064e3b; font-weight: 600; border-radius: 8px; }
+
+  .resumo-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+  .card-resumo {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    padding: 12px 16px;
+    width: 180px;
+  }
+
+  .card-resumo h4 {
+    margin: 0 0 8px 0;
+    font-size: 1rem;
+    color: #222;
+    text-align: center;
+  }
+
+  .card-resumo div {
+    font-size: 0.85rem;
+    margin: 2px 0;
+    text-align: center;
+  }
+
+  /* Responsividade */
+  @media (max-width: 600px) {
+    select {
+      width: 80%;
+    }
+
+    .card-resumo {
+      width: 100%;
+      max-width: 300px;
+    }
+  }
+</style>
+
+<script>
+  const coresSequencia = [
+    ['AZUL', 'LARANJA', 'ROXO', 'AZUL'],
+    ['AMARELO', 'AZUL', 'VERDE', 'AMARELO'],
+    ['ROXO', 'AMARELO', 'LARANJA', 'ROXO'],
+    ['VERDE', 'ROXO', 'AZUL', 'VERDE'],
+    ['LARANJA', 'VERDE', 'AMARELO', 'LARANJA']
+  ];
+
+  const tbodyPrincipal = document.getElementById("tabela-principal");
+  const resumoGrid = document.getElementById("resumo-mensal");
+
+  let domingo = new Date(2025, 3, 20);
+  let quinta = new Date(2025, 3, 24);
+  let index = 0;
+
+  const resumoMensal = {};
+  const totalGeral = { 'AZUL': 0, 'LARANJA': 0, 'ROXO': 0, 'AMARELO': 0, 'VERDE': 0 };
+
+  while (domingo <= new Date(2025, 11, 28) && quinta <= new Date(2026, 0, 1)) {
+    const linha = coresSequencia[index % 5];
+    const tr = document.createElement("tr");
+
+    const mesAnoDomingo = `${domingo.toLocaleString('pt-BR', { month: 'long' })} ${domingo.getFullYear()}`;
+    const mesAnoQuinta = `${quinta.toLocaleString('pt-BR', { month: 'long' })} ${quinta.getFullYear()}`;
+
+    [mesAnoDomingo, mesAnoQuinta].forEach(mes => {
+      if (!resumoMensal[mes]) {
+        resumoMensal[mes] = { 'AZUL': 0, 'LARANJA': 0, 'ROXO': 0, 'AMARELO': 0, 'VERDE': 0 };
+      }
+    });
+
+    for (let i = 0; i < 3; i++) {
+      resumoMensal[mesAnoDomingo][linha[i]]++;
+      totalGeral[linha[i]]++;
+    }
+
+    resumoMensal[mesAnoQuinta][linha[3]]++;
+    totalGeral[linha[3]]++;
+
+    const tdDomingo = document.createElement("td");
+    tdDomingo.textContent = domingo.toLocaleDateString('pt-BR');
+    tr.appendChild(tdDomingo);
+
+    for (let i = 0; i < 3; i++) {
+      const td = document.createElement("td");
+      td.textContent = linha[i];
+      td.className = `cor-${linha[i]}`;
+      tr.appendChild(td);
+    }
+
+    const tdQuinta = document.createElement("td");
+    tdQuinta.textContent = quinta.toLocaleDateString('pt-BR');
+    tr.appendChild(tdQuinta);
+
+    const tdQuintaNoite = document.createElement("td");
+    tdQuintaNoite.textContent = linha[3];
+    tdQuintaNoite.className = `cor-${linha[3]}`;
+    tr.appendChild(tdQuintaNoite);
+
+    tbodyPrincipal.appendChild(tr);
+
+    domingo.setDate(domingo.getDate() + 7);
+    quinta.setDate(quinta.getDate() + 7);
+    index++;
+  }
+
+  for (const mes in resumoMensal) {
+    const card = document.createElement("div");
+    card.className = "card-resumo";
+    card.innerHTML = `<h4>${mes}</h4>` +
+      Object.entries(resumoMensal[mes]).map(([cor, qtd]) => `<div>${cor}: ${qtd}</div>`).join('');
+    resumoGrid.appendChild(card);
+  }
+
+  const cardTotal = document.createElement("div");
+  cardTotal.className = "card-resumo";
+  cardTotal.innerHTML = `<h4>Total Geral</h4>` +
+    Object.entries(totalGeral).map(([cor, qtd]) => `<div>${cor}: ${qtd}</div>`).join('');
+  resumoGrid.appendChild(cardTotal);
+
+  document.getElementById('filtroCor').addEventListener('change', function() {
+    const corSelecionada = this.value;
+    const linhas = tbodyPrincipal.querySelectorAll('tr');
+
+    linhas.forEach(tr => {
+      if (!corSelecionada) {
+        tr.style.display = '';
+      } else {
+        const contemCor = Array.from(tr.children).some(td => td.textContent === corSelecionada);
+        tr.style.display = contemCor ? '' : 'none';
+      }
+    });
+  });
+</script>
