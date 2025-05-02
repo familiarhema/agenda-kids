@@ -1,251 +1,284 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Agenda KIDS 2025</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agenda KIDS 2025 - Calendário</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Inter', sans-serif;
       background-color: #f9fafb;
-      color: #333;
       margin: 0;
       padding: 20px;
+      color: #333;
     }
 
-    h2, h3 {
+    h2 {
       text-align: center;
+      margin-bottom: 30px;
     }
 
-    .filtro-container {
-      margin: 20px auto;
-      max-width: 500px;
-    }
-
-    select {
-      width: 100%;
-      padding: 12px 15px;
-      font-size: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    }
-
-    .tabela-wrapper {
-      overflow-x: auto;
-    }
-
-    .tabela-bonita {
-      width: 100%;
-      border-collapse: separate;
-      border-spacing: 0;
-      margin-top: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-      border-radius: 12px;
-      
-    }
-
-    .tabela-bonita th, .tabela-bonita td {
-      padding: 12px 16px;
-      text-align: center;
-      border-bottom: 1px solid #eee;
-      white-space: nowrap;
-    }
-
-    .cor-AZUL { background-color: #93c5fd; color: #1e3a8a; }
-    .cor-LARANJA { background-color: #fdba74; color: #522300; }
-    .cor-ROXO { background-color: #c4b5fd; color: #4c1d95; }
-    .cor-AMARELO { background-color: #fde68a; color: #665c00; }
-    .cor-VERDE { background-color: #86efac; color: #064e3b; }
-
-    .celula-cor {
-      align-items: center;
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 20px;
       justify-content: center;
-      border-radius: 8px;
-      font-weight: 600;
-      height: 40px;
     }
 
-    .data-formatada {
+    .month {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      padding: 10px;
+      height: 100%;
+    }
+
+    .month h3 {
+      text-align: center;
+      margin: 10px 0;
+    }
+
+    .days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      text-align: center;
+    }
+
+    .day-name {
+      font-weight: bold;
+      color: #666;
+    }
+
+    .day {
+      background: #fff;
+      border-radius: 6px;
+      border: 1px solid #eee;
+      padding: 4px;
+      height: 100px;
+      font-size: 0.75rem;
       display: flex;
       flex-direction: column;
-      line-height: 1.2;
-      font-size: 0.9rem;
+      align-items: center;
+      justify-content: start;
     }
 
-    @media (max-width: 600px) {
-      .celula-cor {
-        font-size: 0;
-      }
+    .event-box {
+      font-size: 0.65rem;
+      padding: 1px 3px;
+      margin-top: 2px;
+      border-radius: 4px;
+      color: #fff;
+      width: 100%;
+      text-align: center;
     }
-    .resumo-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    justify-content: center;
-    margin-top: 30px;
-  }
 
-  .card-resumo {
-    background: #fff;
-    border: 1px solid #eee;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    padding: 12px 16px;
-    width: 180px;
-    text-align: center;
-  }
-
-  @media (max-width: 600px) {
-    .tabela-bonita th{
-        font-size: 0.7rem;
-      }
-      .data-formatada{
-        font-size: 0.7rem;
-      }
-      .celula-cor {
-        font-size: 0;
-      }
-      .tabela-wrapper {
-        width: 100%;
-        transform-origin: top;
-      }
-  }
-</style>
+    .AZUL { background-color: #3b82f6; }
+    .LARANJA { background-color: #fb923c; }
+    .ROXO { background-color: #8b5cf6; }
+    .AMARELO { background-color: #facc15; color: #000; }
+    .VERDE { background-color: #22c55e; }
+  </style>
 </head>
 <body>
-  <h2>Agenda KIDS 2025</h2>
-
-  <div class="filtro-container">
-    <select id="filtroCor">
-      <option value="">Filtrar por cor</option>
-      <option value="AZUL">AZUL</option>
-      <option value="LARANJA">LARANJA</option>
-      <option value="ROXO">ROXO</option>
-      <option value="AMARELO">AMARELO</option>
-      <option value="VERDE">VERDE</option>
+  <h2>Agenda KIDS 2025 - Calendário</h2>
+  <div style="text-align:center; margin-bottom: 20px;">
+    <label for="filtroMes">Visualizar: </label>
+    <select id="filtroMes">
+      <option value="atual" selected>Somente mês atual</option>
+      <option value="aberto">Meses em aberto</option>
+      <option value="todos">Exibir todos os meses</option>
     </select>
   </div>
-
-  <div class="tabela-wrapper">
-    <table class="tabela-bonita">
-      <thead>
-        <tr>
-          <th>Dom</th>
-          <th>Manh</th>
-          <th>Tard</th>
-          <th>Noit</th>
-          <th>Qui</th>
-          <th>Qui N</th>
-        </tr>
-      </thead>
-      <tbody id="tabela-principal"></tbody>
-    </table>
-  </div>
-
-  <h3>Resumo Mensal</h3>
-  <div id="resumo-mensal" class="resumo-grid"></div>
-
+  <div class="calendar" id="calendar"></div>
+<div id="totalizadorAnual" style="text-align:center; margin-top: 40px; font-size: 0.9rem; font-weight: 500;"></div>
 <script>
     const coresSequencia = [
       ['ROXO', 'AMARELO', 'LARANJA', 'ROXO'],
       ['VERDE', 'ROXO', 'AZUL', 'VERDE'],
       ['LARANJA', 'VERDE', 'AMARELO', 'LARANJA'],
       ['AZUL', 'LARANJA', 'ROXO', 'AZUL'],
-      ['AMARELO', 'AZUL', 'VERDE', 'AMARELO']
+      ['AMARELO', 'AZUL', 'VERDE', 'AMARELO'],
     ];
 
-    const tbody = document.getElementById("tabela-principal");
-const resumoGrid = document.getElementById("resumo-mensal");
+    const eventos = {};
+    const eventosEspeciais = [
+      { data: '2025-05-16', nome: 'Brilhe', cor: 'AMARELO' },
+      { data: '2025-05-17', nome: 'Brilhe', cor: 'AZUL' }
+    ];
+
+
+    const eventosEspeciaisMarcadores = [
+      { data: '2025-05-15', nome: 'Brilhe', icone: '⭐', class: "" },
+      { data: '2025-05-16', nome: 'Brilhe', icone: '⭐', class: "" },
+      { data: '2025-05-17', nome: 'Brilhe', icone: '⭐', class: "" },
+      { data: '2025-05-18', nome: 'Brilhe', icone: '⭐', class: "" }
+    ];
+
+
 
     let domingo = new Date(2025, 4, 4);
-    let quinta = new Date(2025, 4, 8);
+    let quinta = new Date(2025, 4, 1);
     let index = 0;
 
-    const formatarData = (data) => {
-      const dia = data.getDate();
-      const mes = data.toLocaleDateString('pt-BR', { month: 'short' });
-      return `<div class='data-formatada'><strong>${dia}</strong><span>${mes}</span></div>`;
-    };
+    while (domingo <= new Date(2025, 11, 28) && quinta <= new Date(2026, 0, 1)) {
+      const linha = coresSequencia[index % 5];
+      const domStr = domingo.toISOString().split('T')[0];
+      const quiStr = quinta.toISOString().split('T')[0];
 
-    const resumoMensal = {};
-const totalGeral = { 'AZUL': 0, 'LARANJA': 0, 'ROXO': 0, 'AMARELO': 0, 'VERDE': 0 };
+      eventos[domStr] = {
+        manha: linha[0],
+        tarde: linha[1],
+        noite: linha[2]
+      };
 
-while (domingo <= new Date(2025, 11, 28) && quinta <= new Date(2026, 0, 1)) {
-  const linha = coresSequencia[index % 5];
-  const tr = document.createElement("tr");
+      if (!eventos[quiStr]) eventos[quiStr] = {};
+      eventos[quiStr].quintaNoite = linha[3];
 
-  const mesAnoDomingo = `${domingo.toLocaleString('pt-BR', { month: 'long' })} ${domingo.getFullYear()}`;
-  const mesAnoQuinta = `${quinta.toLocaleString('pt-BR', { month: 'long' })} ${quinta.getFullYear()}`;
-
-  [mesAnoDomingo, mesAnoQuinta].forEach(mes => {
-    if (!resumoMensal[mes]) {
-      resumoMensal[mes] = { 'AZUL': 0, 'LARANJA': 0, 'ROXO': 0, 'AMARELO': 0, 'VERDE': 0 };
+      domingo.setDate(domingo.getDate() + 7);
+      quinta.setDate(quinta.getDate() + 7);
+      index++;
     }
-  });
 
-  for (let i = 0; i < 3; i++) {
-    resumoMensal[mesAnoDomingo][linha[i]]++;
-    totalGeral[linha[i]]++;
-  }
+    const calendar = document.getElementById("calendar");
+    const meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
 
-  resumoMensal[mesAnoQuinta][linha[3]]++;
-  totalGeral[linha[3]]++;
+    for (let mes = 0; mes < 12; mes++) {
+      const divMes = document.createElement("div");
+      divMes.className = "month";
+      divMes.innerHTML = `<h3>${meses[mes]}</h3>`;
 
-  const tdDomingo = document.createElement("td");
-  tdDomingo.innerHTML = formatarData(domingo);
-  tr.appendChild(tdDomingo);
+      const days = document.createElement("div");
+      days.className = "days";
 
-  for (let i = 0; i < 3; i++) {
-    const td = document.createElement("td");
-    td.className = `cor-${linha[i]} celula-cor`;
-    td.textContent = linha[i];
-    tr.appendChild(td);
-  }
+      const diasSemana = ["D", "S", "T", "Q", "Q", "S", "S"];
+      diasSemana.forEach(ds => {
+        const d = document.createElement("div");
+        d.className = "day-name";
+        d.textContent = ds;
+        days.appendChild(d);
+      });
 
-  const tdQuinta = document.createElement("td");
-  tdQuinta.innerHTML = formatarData(quinta);
-  tr.appendChild(tdQuinta);
+      const primeiroDiaSemana = new Date(2025, mes, 1).getDay();
+      for (let i = 0; i < primeiroDiaSemana; i++) {
+        const empty = document.createElement("div");
+        empty.className = "day";
+        days.appendChild(empty);
+      }
 
-  const tdQuintaNoite = document.createElement("td");
-  tdQuintaNoite.className = `cor-${linha[3]} celula-cor`;
-  tdQuintaNoite.textContent = linha[3];
-  tr.appendChild(tdQuintaNoite);
+      const diasNoMes = new Date(2025, mes + 1, 0).getDate();
+      for (let dia = 1; dia <= diasNoMes; dia++) {
+        const dataAtual = new Date(2025, mes, dia);
+        const dataStr = dataAtual.toISOString().split('T')[0];
+        const divDia = document.createElement("div");
+        divDia.className = "day";
 
-  tbody.appendChild(tr);
+        const conteudo = document.createElement("div");
+        conteudo.textContent = dia;
+        const especial = eventosEspeciaisMarcadores.find(e => e.data === dataStr);
+        if (especial){
+            conteudo.innerHTML += ` ${especial.icone} `;
+        }     
+        divDia.appendChild(conteudo);
 
-  domingo.setDate(domingo.getDate() + 7);
-  quinta.setDate(quinta.getDate() + 7);
-  index++;
-}
-
-for (const mes in resumoMensal) {
-  const card = document.createElement("div");
-  card.className = "card-resumo";
-  card.innerHTML = `<h4>${mes}</h4>` +
-    Object.entries(resumoMensal[mes]).map(([cor, qtd]) => `<div>${cor}: ${qtd}</div>`).join('');
-  resumoGrid.appendChild(card);
-}
-
-const cardTotal = document.createElement("div");
-cardTotal.className = "card-resumo";
-cardTotal.innerHTML = `<h4>Total Geral</h4>` +
-  Object.entries(totalGeral).map(([cor, qtd]) => `<div>${cor}: ${qtd}</div>`).join('');
-resumoGrid.appendChild(cardTotal);
-
-    document.getElementById('filtroCor').addEventListener('change', function() {
-      const corSelecionada = this.value;
-      const linhas = tbody.querySelectorAll('tr');
-      linhas.forEach(tr => {
-        if (!corSelecionada) {
-          tr.style.display = '';
-        } else {
-          const contemCor = Array.from(tr.children).some(td => td.textContent.includes(corSelecionada));
-          tr.style.display = contemCor ? '' : 'none';
+        const especialHoje = eventosEspeciais.find(e => e.data === dataStr);
+        if (especialHoje) {
+          const box = document.createElement("div");
+          box.className = `event-box ${especialHoje.cor}`;
+          box.textContent = `${especialHoje.nome} - ${especialHoje.cor}`;
+          divDia.appendChild(box);
         }
+
+        if (eventos[dataStr]) {
+          const ev = eventos[dataStr];
+          if (ev.manha) {
+            const box = document.createElement("div");
+            box.className = `event-box ${ev.manha}`;
+            box.textContent = `Manhã - ${ev.manha}`;
+            divDia.appendChild(box);
+          }
+          if (ev.tarde) {
+            const box = document.createElement("div");
+            box.className = `event-box ${ev.tarde}`;
+            box.textContent = `Tarde - ${ev.tarde}`;
+            divDia.appendChild(box);
+          }
+          if (ev.noite) {
+            const box = document.createElement("div");
+            box.className = `event-box ${ev.noite}`;
+            box.textContent = `Noite - ${ev.noite}`;
+            divDia.appendChild(box);
+          }
+          if (ev.quintaNoite) {
+            const box = document.createElement("div");
+            box.className = `event-box ${ev.quintaNoite}`;
+            box.textContent = `Noite - ${ev.quintaNoite}`;
+            divDia.appendChild(box);
+          }
+        }
+
+        days.appendChild(divDia);
+      }
+
+      divMes.appendChild(days);
+
+      // Rodapé com somatórios
+      const resumo = { 'AZUL': 0, 'LARANJA': 0, 'ROXO': 0, 'AMARELO': 0, 'VERDE': 0 };
+      const datasEventos = Object.entries(eventos).filter(([data]) => parseInt(data.split('-')[1], 10) === mes + 1);
+      datasEventos.forEach(([data, ev]) => {
+        ['manha', 'tarde', 'noite', 'quintaNoite'].forEach(turno => {
+          const cor = ev[turno];
+          if (cor && resumo[cor] !== undefined) resumo[cor]++;
+        });
+      });
+
+      const datasEspeciais = eventosEspeciais.filter(e => parseInt(e.data.split('-')[1], 10) === mes + 1);
+      datasEspeciais.forEach(e => {
+        if (e.cor && resumo[e.cor] !== undefined) resumo[e.cor]++;
+      });
+
+      const rodape = document.createElement("div");
+      rodape.style.marginTop = "10px";
+      rodape.style.fontSize = "0.75rem";
+      rodape.innerHTML = Object.entries(resumo).map(([cor, qtd]) => `${cor}: <strong>${qtd}</strong>`).join(" | ");
+      divMes.appendChild(rodape);
+
+      calendar.appendChild(divMes);
+    }
+
+    // Filtro de exibição por mês
+    document.getElementById("filtroMes").addEventListener("change", function() {
+      const modo = this.value;
+      const hoje = new Date();
+      const mesesDiv = document.querySelectorAll(".month");
+      mesesDiv.forEach((mesEl, idx) => {
+        const mostrar =
+          modo === "todos" ||
+          (modo === "aberto" && idx >= hoje.getMonth()) ||
+          (modo === "atual" && idx === hoje.getMonth());
+        mesEl.style.display = mostrar ? "block" : "none";
       });
     });
+
+    // Totalizador anual
+    const totalAno = { 'AZUL': 0, 'LARANJA': 0, 'ROXO': 0, 'AMARELO': 0, 'VERDE': 0 };
+    Object.values(eventos).forEach(ev => {
+      ['manha', 'tarde', 'noite', 'quintaNoite'].forEach(turno => {
+        const cor = ev[turno];
+        if (cor && totalAno[cor] !== undefined) totalAno[cor]++;
+      });
+    });
+    eventosEspeciais.forEach(e => {
+      if (e.cor && totalAno[e.cor] !== undefined) totalAno[e.cor]++;
+    });
+
+    const totalizador = document.getElementById("totalizadorAnual");
+    totalizador.innerHTML = 'Total Anual: ' + Object.entries(totalAno).map(([cor, qtd]) => `${cor}: <strong>${qtd}</strong>`).join(" | ");
+
+    // Executa filtro padrão ao carregar
+    document.getElementById("filtroMes").dispatchEvent(new Event("change"));
   </script>
 </body>
 </html>
