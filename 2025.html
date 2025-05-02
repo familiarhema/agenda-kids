@@ -10,8 +10,13 @@
       font-family: 'Inter', sans-serif;
       background-color: #f9fafb;
       margin: 0;
-      padding: 20px;
+      padding: 10px;
       color: #333;
+      box-sizing: border-box;
+    }
+
+    * {
+      box-sizing: border-box;
     }
 
     h2 {
@@ -21,9 +26,11 @@
 
     .calendar {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      grid-template-columns: 1fr;
       gap: 20px;
       justify-content: center;
+      max-width: 800px;
+      margin: 0 auto;
     }
 
     .month {
@@ -31,8 +38,10 @@
       border: 1px solid #ddd;
       border-radius: 10px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-      padding: 10px;
+      padding: 8px 4px;
       height: 100%;
+      width: 100%;
+      overflow: hidden;
     }
 
     .month h3 {
@@ -43,8 +52,9 @@
     .days {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      gap: 4px;
+      gap: 2px;
       text-align: center;
+      width: 100%;
     }
 
     .day-name {
@@ -57,12 +67,14 @@
       border-radius: 6px;
       border: 1px solid #eee;
       padding: 4px;
-      height: 100px;
+      aspect-ratio: 1;
       font-size: 0.75rem;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: start;
+      position: relative;
+      cursor: pointer;
     }
 
     .event-box {
@@ -75,6 +87,136 @@
       text-align: center;
     }
 
+    .popup {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .popup-content {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 90%;
+      width: 300px;
+      position: relative;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .evento-especial {
+      text-align: center;
+      font-size: 1.2rem;
+      color: #4b5563;
+      margin: -5px 0 20px 0;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .evento-especial .icone {
+      margin-left: 5px;
+      font-size: 1.1em;
+    }
+
+    .popup .event-box {
+      height: auto;
+      padding: 8px 12px;
+      margin: 8px 0;
+      border-radius: 6px;
+      display: block;
+      color: white;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .popup-content h3 {
+      margin: 0 0 15px 0;
+      font-size: 1.1rem;
+      color: #333;
+    }
+
+    #popupEvents {
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+
+    .AMARELO.event-box {
+      color: #000;
+    }
+
+    .close-popup {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 5px;
+      }
+
+      .calendar {
+        max-width: 100%;
+        gap: 10px;
+      }
+
+      .month {
+        padding: 4px 2px;
+      }
+
+      .day {
+        font-size: 0.7rem;
+        gap: 1px;
+        padding: 1px;
+        min-height: 50px;
+        width: 100%;
+      }
+
+      .days {
+        gap: 1px;
+      }
+
+      .event-box {
+        height: 8px;
+        padding: 0;
+        margin: 1px 0;
+        border-radius: 50%;
+        display: block;
+        color: transparent;
+        font-size: 0;
+      }
+
+      .day > div:first-child {
+        margin-bottom: 2px;
+        font-size: 0.8rem;
+        width: 100%;
+        text-align: center;
+      }
+
+      .day > div:not(:first-child) {
+        display: block;
+        width: 8px;
+      }
+
+      .month {
+        padding: 5px;
+      }
+
+      .days {
+        gap: 2px;
+      }
+    }
+
     .AZUL { background-color: #3b82f6; }
     .LARANJA { background-color: #fb923c; }
     .ROXO { background-color: #8b5cf6; }
@@ -83,6 +225,13 @@
   </style>
 </head>
 <body>
+  <div class="popup" id="eventPopup">
+    <div class="popup-content">
+      <button class="close-popup">&times;</button>
+      <h3 id="popupDate"></h3>
+      <div id="popupEvents"></div>
+    </div>
+  </div>
   <h2>Agenda KIDS 2025 - Calendário</h2>
   <div style="text-align:center; margin-bottom: 20px;">
     <label for="filtroMes">Visualizar: </label>
@@ -116,8 +265,6 @@
       { data: '2025-05-17', nome: 'Brilhe', icone: '⭐', class: "" },
       { data: '2025-05-18', nome: 'Brilhe', icone: '⭐', class: "" }
     ];
-
-
 
     let domingo = new Date(2025, 4, 4);
     let quinta = new Date(2025, 4, 1);
@@ -174,13 +321,15 @@
         const dataStr = dataAtual.toISOString().split('T')[0];
         const divDia = document.createElement("div");
         divDia.className = "day";
-
+        
+        const eventosHoje = [];
         const conteudo = document.createElement("div");
         conteudo.textContent = dia;
+        
         const especial = eventosEspeciaisMarcadores.find(e => e.data === dataStr);
-        if (especial){
-            conteudo.innerHTML += ` ${especial.icone} `;
-        }     
+        if (especial) {
+          conteudo.innerHTML += ` ${especial.icone} `;
+        }
         divDia.appendChild(conteudo);
 
         const especialHoje = eventosEspeciais.find(e => e.data === dataStr);
@@ -189,6 +338,7 @@
           box.className = `event-box ${especialHoje.cor}`;
           box.textContent = `${especialHoje.nome} - ${especialHoje.cor}`;
           divDia.appendChild(box);
+          eventosHoje.push({ tipo: especialHoje.nome, cor: especialHoje.cor });
         }
 
         if (eventos[dataStr]) {
@@ -198,25 +348,60 @@
             box.className = `event-box ${ev.manha}`;
             box.textContent = `Manhã - ${ev.manha}`;
             divDia.appendChild(box);
+            eventosHoje.push({ tipo: 'Manhã', cor: ev.manha });
           }
           if (ev.tarde) {
             const box = document.createElement("div");
             box.className = `event-box ${ev.tarde}`;
             box.textContent = `Tarde - ${ev.tarde}`;
             divDia.appendChild(box);
+            eventosHoje.push({ tipo: 'Tarde', cor: ev.tarde });
           }
           if (ev.noite) {
             const box = document.createElement("div");
             box.className = `event-box ${ev.noite}`;
             box.textContent = `Noite - ${ev.noite}`;
             divDia.appendChild(box);
+            eventosHoje.push({ tipo: 'Noite', cor: ev.noite });
           }
           if (ev.quintaNoite) {
             const box = document.createElement("div");
             box.className = `event-box ${ev.quintaNoite}`;
             box.textContent = `Noite - ${ev.quintaNoite}`;
             divDia.appendChild(box);
+            eventosHoje.push({ tipo: 'Noite', cor: ev.quintaNoite });
           }
+        }
+
+        if (eventosHoje.length > 0) {
+          divDia.addEventListener('click', () => {
+            const popup = document.getElementById('eventPopup');
+            const popupDate = document.getElementById('popupDate');
+            const popupEvents = document.getElementById('popupEvents');
+            
+            popupDate.textContent = `${dia} de ${meses[mes]} de 2025`;
+            
+            // Adiciona o nome do evento especial se existir
+            const eventoEspecialNome = eventosEspeciaisMarcadores.find(e => e.data === dataStr);
+            if (eventoEspecialNome) {
+              popupEvents.innerHTML = `
+                <div class="evento-especial">
+                  ${eventoEspecialNome.nome}
+                  <span class="icone">${eventoEspecialNome.icone}</span>
+                </div>`;
+            } else {
+              popupEvents.innerHTML = '';
+            }
+            
+            // Adiciona os eventos do dia
+            popupEvents.innerHTML += eventosHoje.map(evento =>
+              `<div class="event-box ${evento.cor}">
+                ${evento.tipo} - ${evento.cor}
+              </div>`
+            ).join('');
+            
+            popup.style.display = 'flex';
+          });
         }
 
         days.appendChild(divDia);
@@ -276,6 +461,17 @@
 
     const totalizador = document.getElementById("totalizadorAnual");
     totalizador.innerHTML = 'Total Anual: ' + Object.entries(totalAno).map(([cor, qtd]) => `${cor}: <strong>${qtd}</strong>`).join(" | ");
+
+    // Configurar fechamento do popup
+    document.querySelector('.close-popup').addEventListener('click', () => {
+      document.getElementById('eventPopup').style.display = 'none';
+    });
+
+    document.getElementById('eventPopup').addEventListener('click', (e) => {
+      if (e.target.id === 'eventPopup') {
+        document.getElementById('eventPopup').style.display = 'none';
+      }
+    });
 
     // Executa filtro padrão ao carregar
     document.getElementById("filtroMes").dispatchEvent(new Event("change"));
